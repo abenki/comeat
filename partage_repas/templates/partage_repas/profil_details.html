@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% load static%}
+
+{% if error %}
+  <p><strong>Utilisateur inexistant ou mauvais de mot de passe.</strong></p>
+{% endif %}
+
+{% block contenu %}
+<h4><strong>Profil utilisateur<br/><br/></strong></h4>
+    <div class="card bg-light">
+      <div class="card-header">
+        <h5 class="card-title">Informations principales</h5>
+      </div>
+      <div class="card-body bg-light">
+        <p class="card-text">
+            Pseudo: {{profil.username}}
+          <br/>
+          Email: {{profil.email}}</p>
+
+<br/> <h5 >Ses repas</h5> <br/>
+{%for repas in repas%}
+    {%if repas.utilisateur == profil.username %}
+      <br/>
+      <div class="card bg-light">
+        <div class="card-header">
+          {{repas.menu}}
+        </div>
+        <div class="card-body bg-light">
+          <h5 class="card-title" style="color: #228B22;">{{repas.date}}</h5>
+          <p class="card-text">{{repas.description}}</p>
+          <p class="card-text"> Il y a {{repas.nombre_d_inscrit}} participant{{ repas.nombre_d_inscrit|pluralize }}.
+            {%if repas.nombre_d_inscrit != 0 %}
+              Les participants :
+              {%for inscrit in inscrit%}
+                {%if inscrit.idrepas == repas.pk %}
+                  {{inscrit.nom}}
+                {%endif%}
+              {%endfor%}
+            {%endif%}
+            <br/>
+          </p>
+          {% if user.is_authenticated%}
+            {%if repas.place_restantes != 0 %}
+            <a href="{% url 'repas_details' pk=repas.pk %}"> Détails du repas</a>
+              {%for i in inscrit%}
+                {% if i.nom == user.username and i.idrepas == repas.pk%}
+                  <div class="alert alert-success" role="alert">
+                    Vous êtes déjà inscrit à ce repas
+                  </div>
+                  {{b.rend_vrai}}
+                {%endif%}
+              {%endfor%}
+
+              {%if repas.utilisateur == user.username %}
+                <form method="post" action="{% url 'supprimer_repas' repas.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Supprimer ce repas</button>
+          </form>
+              {%elif b.est_faux%}
+                <form method="post" action="{% url 'reserver_repas' repas.pk %}">
+                {% csrf_token %}
+                  <button type="submit" class="btn btn-success">Réserver ce repas</button>
+                </form>
+              {%endif%}
+              {% else %}
+            <div class="alert alert-danger" role="alert">
+              Ce repas est complet !
+            </div>
+          {%endif%}
+              {%endif%}
+        </div>
+      </div>
+    {%endif%}
+    {{b.rend_faux}}
+  {%endfor%}
+      </div>
+    </div>
+    <br/>
+{% endblock %}

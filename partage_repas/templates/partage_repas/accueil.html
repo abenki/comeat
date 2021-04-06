@@ -1,0 +1,37 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block titre %}
+  COMEAT - Accueil
+{% endblock %}
+
+{% block image %}
+  <figure id="img_a">
+    <img src="{% static "accueil_img.jpg" %}" alt="Fonctionnement de Comeat" class="img-fluid"/>
+  </figure>
+{% endblock %}
+
+{% block contenu %}
+  <div class="card-deck">
+    <div class="card text-white mb-3 col-4 " style="background-color: #2cb42c;">
+      <div class="card-body">
+        <h5 class="card-title">S'inscrire</h5>
+        <p class="card-text">Pour utiliser COMEAT, il faut d'abord t'inscrire : c'est rapide et gratuit. Une fois inscrit, connecte-toi pour accéder à tous les repas ou en proposer un toi-même.</p>
+      </div>
+    </div>
+    <div class="card text-white mb-3 col-4" style="background-color: #228b22;">
+      <div class="card-body">
+        <h5 class="card-title">Parcourir</h5>
+        <p class="card-text">COMEAT te permet de choisir parmi de nombreux repas cuisinés par la communauté. Lorsque tu accèdes à la plateforme, tu peux parcourir la liste de repas disponibles, ou bien rechercher un plat en particulier. Lorsque tu trouves quelque chose qui te plaît, clique sur le bouton pour participer.</p>
+      </div>
+    </div>
+    <div class="card text-white mb-3 col-4" style="background-color: #186218;">
+      <div class="card-body">
+        <h5 class="card-title">Déguster</h5>
+        <p class="card-text">Le moment fatidique est arrivé : c'est l'heure de manger ! Tu peux alors déguster un délicieux repas et te faire de nouveaux amis !</p>
+      </div>
+    </div>
+  </div>
+{% endblock %}

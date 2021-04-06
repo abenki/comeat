@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block titre %}
+  Comeat - Repas
+{% endblock %}
+
+{% block h1 %}
+  Repas
+{% endblock %}
+
+{% block contenu %}
+
+<hr>
+      <div class="card bg-light">
+        <div class="card-header">
+          <strong>{{repas.menu}}</strong> par <a href="{% url 'profil_details' pk=repas.pk %}">{{repas.utilisateur}}</a> le <p style="color: #228B22;">{{repas.date}}</p>
+        </div>
+        <div class="card-body bg-light">
+          <p class="card-text"> <p style="text-decoration: underline">Description :</p> {{repas.description}}</p>
+          <p class="card-text"> <p style="text-decoration: underline">Régime alimentaire :</p> {{repas.regime}}</p>
+          <p class="card-text"> <p style="text-decoration: underline">Prix : </p>{{repas.prix}} euros</p>
+          {%if repas.place_restantes != 0 %}
+
+            {% if repas.place_restantes == 1 %}
+              <p class="card-text"> Il reste <strong>{{repas.place_restantes}}</strong> place </p>
+            {% else %}
+              <p class="card-text"> Il reste <strong>{{repas.place_restantes}}</strong> places </p>
+            {% endif %}
+
+            {% if user.is_authenticated%}
+
+              {%for i in inscrit%}
+                {% if i.nom == user.username and i.idrepas == repas.pk%}
+                  <div class="alert alert-success" role="alert">
+                    Vous êtes déjà inscrit à ce repas
+                  </div>
+                  {{b.rend_vrai}}
+                {%endif%}
+              {%endfor%}
+
+              {%if repas.utilisateur == user.username %}
+                <div class="alert alert-info" role="alert">
+                  C'est votre repas !
+                </div>
+              {%elif b.est_faux%}
+                <form method="post" action="{% url 'reserver_repas' repas.pk %}">
+                {% csrf_token %}
+                  <button type="submit" class="btn btn-success">Réserver ce repas</button>
+                </form>
+              {%endif%}
+
+            {% else %}
+              <a href="{% url 'connexion'%}" class="btn" style="background-color: #228B22; color:white;">Se connecter</a>
+            {% endif %}
+
+          {% else %}
+            <div class="alert alert-danger" role="alert">
+              Ce repas est complet !
+            </div>
+          {%endif%}
+        <p class="card-text"> <p style="text-decoration: underline">Moyen de contact : </p>{{repas.moyen_de_contact}}</p>
+        <p class="alert alert-warning" role="alert">Allergènes présents: {{repas.allergene}}</p>
+        <a class="btn btn-info" href="{% url 'laisser_commentaire' pk=repas.pk %}">Commenter</a>
+        <br>
+        <br>
+        <h5>Commentaires</h5>
+        {% for comment in repas.comments.all %}
+    <div class="comment">
+      <div class="alert alert-dark">
+        <strong>{{ comment.pseudo}}</strong> le {{ comment.created_date }}
+        <p>{{ comment.commentaire|linebreaks }}</p>
+      </div>
+    </div>
+{% empty %}
+    <p>Aucun commentaire :(</p>
+{% endfor %}
+        </div>
+      </div>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block titre %}
+  Comeat - Liste des repas
+{% endblock %}
+
+{% block h1 %}
+  Liste des repas
+{% endblock %}
+
+{% block contenu %}
+{% if user.is_authenticated%}
+<form method="GET" action="{% url 'rechercher' %}"" class="form-row">
+  <div class="col-10">
+    <input name="search" value="{{request.GET.search}}" class="form-control input-sm mr-sm-2" type="Search" placeholder="Rechercher un repas" aria-label="Search">
+  </div>
+  <div class="col-2">
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Rechercher</button>
+  </div>
+</form>
+
+<br/>
+
+{% for n in repas %}
+    {%if n.est_dans_futur %}
+      <div class="card bg-light">
+        <div class="card-header">
+          <strong>{{n.menu}}</strong> par <a href="{% url 'profil_details' pk=n.pk %}">{{n.utilisateur}}</a> <p style="color: #228B22;">{{n.date}}</p>
+        </div>
+        <div class="card-body bg-light">
+          <p class="card-text"> <h6>Description :</h6> {{n.description}}</p>
+          <br>
+          <p class="card-text"> <p>Régime alimentaire : {{n.regime}}</p>
+          <p class="card-text"> <p>Prix : {{n.prix}}€</p>
+          {%if n.place_restantes != 0 %}
+            <p class="card-text"> Il reste <strong>{{n.place_restantes}}</strong> place{{ n.place_restantes|pluralize }} </p>
+
+              {%for i in inscrit%}
+                {% if i.nom == user.username and i.idrepas == n.pk%}
+                  <a href="{% url 'repas_details' pk=n.pk %}"> Détails du repas</a>
+                  <div class="alert alert-success" role="alert">
+                    Vous êtes déjà inscrit à ce repas
+                  </div>
+                  {{b.rend_vrai}}
+                {%endif%}
+              {%endfor%}
+
+              {%if n.utilisateur == user.username %}
+              <a href="{% url 'repas_details' pk=n.pk %}"> Détails du repas</a>
+                <div class="alert alert-info" role="alert">
+                  C'est votre repas !
+                </div>
+
+              {%elif b.est_faux%}
+                <a href="{% url 'repas_details' pk=n.pk %}"> Détails du repas</a>
+                <br>
+                <br>
+                <form method="post" action="{% url 'reserver_repas' n.pk %}">
+                {% csrf_token %}
+                  <button type="submit" class="btn btn-success">Réserver ce repas</button>
+                </form>
+
+              {%endif%}
+
+          {% else %}
+            <div class="alert alert-danger" role="alert">
+              Ce repas est complet !
+            </div>
+          {%endif%}
+        </div>
+      </div>
+      <br/>
+    {% endif %}
+    {{b.rend_faux}}
+  {% endfor %}
+
+
+<div class="pagination">
+   {% if repas.has_previous %}
+       <a href="{% url 'listerepas' repas.previous_page_number %}" class="btn btn-success" style="background-color: #2cb42c;margin-right: 10px">Précédente</a>
+   {% endif %}
+
+   <span class="current">
+       Page {{ repas.number }} sur {{ repas.paginator.num_pages }}
+   </span>
+
+   {% if repas.has_next %}
+      <a href="{% url 'listerepas' repas.next_page_number %}" class="btn btn-success" style="background-color: #2cb42c;margin-left: 10px" >Suivante</a>
+   {% endif %}
+</div>
+<br/>
+
+{% else %}
+  <p>Connectez-vous afin d'accéder à la liste des repas disponibles.</p>
+  <a href="{% url 'connexion'%}" class="btn" style="background-color: #228B22; color:white;">Se connecter</a>
+  <br>
+  <br>
+{% endif %}
+
+{% endblock %}

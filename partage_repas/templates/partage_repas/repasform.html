@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block titre %}
+  Comeat - Nouveau repas
+{% endblock %}
+
+{% block h1 %}
+  Nouveau repas
+{% endblock %}
+
+{% block contenu %}
+{% if messages %}
+<div class="alert alert-danger" role="alert">
+<ul class="messages">
+    {% for message in messages %}
+    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+</div>
+{% endif %}
+
+{% if user.is_authenticated %}
+<form method="post" novalidate>
+  {% csrf_token %}
+  <div class="row">
+    <div class="col-4">
+      {{ form.menu|as_crispy_field }}
+    </div>
+    <div class="col-4">
+      {{ form.date|as_crispy_field }}
+    </div>
+    <div class="col-4">
+      {{ form.prix|as_crispy_field }}
+    </div>
+  </div>
+  {{ form.description|as_crispy_field }}
+  {{ form.moyen_de_contact|as_crispy_field }}
+  {{ form.nombre_participant|as_crispy_field }}
+  {{ form.regime|as_crispy_field }}
+  {{ form.allergene|as_crispy_field }}
+    <p><small>*Ce champ est obligatoire</small></p>
+    <button type="submit" class="btn btn-success">Ajouter ce repas</button>
+  </form>
+
+{%else%}
+<p> Vous ne pouvez pas ajouter de repas car vous n'êtes pas connecté</p>
+  <a href="{% url 'connexion' %}" class="btn btn-success" role="button" aria-pressed="true" >Se connecter </a>
+{%endif%}
+<br/>
+{% endblock %}

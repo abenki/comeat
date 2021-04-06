@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% load static%}
+
+{% if error %}
+  <p><strong>Mauvais mail ou mauvais de mot de passe.</strong></p>
+{% endif %}
+
+
+{% block titre %}
+  Profil - {{profil.username}}
+{% endblock %}
+
+{% block h1 %}
+  <h1>Mon profil</h1>
+{% endblock %}
+
+{% block contenu %}
+{% if user.is_authenticated %}
+    <div class="card bg-light">
+      <div class="card-header">
+        <h5 class="card-title">Mes informations</h5>
+      </div>
+      <div class="card-body bg-light">
+        <p class="card-text">
+            Pseudo: {{user.username}}
+          <br/>
+          {%if user.last_name %}
+            Nom: {{user.last_name}}
+            <br/>
+          {%endif%}
+          {%if user.first_name %}
+            Prénom: {{user.first_name}}
+            <br/>
+          {%endif%}
+          Mail: {{user.email}}</p>
+      </div>
+    </div>
+    <br/>
+
+    Vous voulez changer de mot de passe ?
+    <br/>
+    <div>
+      <a href="{% url 'changer_mdp' %}" class="btn btn-success" role="button" aria-pressed="true" >Changer le mot de passe</a>
+    </div>
+    <br/>
+
+    Vous voulez vous déconnecter ?
+    <br/>
+    <div>
+      <a href="{% url 'deconnexion' %}" class="btn btn-success" role="button" aria-pressed="true" >Se déconnecter</a>
+    </div>
+    <br/>
+{%else%}
+  <p>Connectez-vous afin d'accéder à votre profil</p>
+  <a href="{% url 'connexion' %}" class="btn btn-success" role="button" aria-pressed="true" >Se connecter </a>
+{%endif%}
+<br>
+<br>
+{% endblock %}

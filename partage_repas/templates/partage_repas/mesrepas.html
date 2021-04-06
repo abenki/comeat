@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block titre %}
+  Comeat - Mes Repas
+{% endblock %}
+
+{% block h1 %}
+  Mes Repas
+{% endblock %}
+
+{% block contenu %}
+
+{% if user.is_authenticated %}
+  <h4>Mes inscriptions à venir</h4>
+
+  {%for inscrit in inscrit%}
+    {%if inscrit.nom == user.username %}
+      {%for repas in repas%}
+        {%if inscrit.idrepas == repas.pk %}
+          <br/>
+          <div class="card bg-light">
+            <div class="card-header">
+              {{repas.menu}}
+            </div>
+            <div class="card-body bg-light">
+              <h5 class="card-title" style="color: #228B22;">{{repas.date}}</h5>
+              <p class="card-text">{{repas.description}}</p>
+              <p class="card-text"><em>Pour contacter l'hôte : {{repas.moyen_de_contact}}</em></p>
+              <a href="{% url 'repas_details' pk=repas.pk %}"> Détails du repas</a>
+              <form method="post" action="{% url 'desinscrire_repas' repas.pk %}">
+              {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Se désinscrire</button>
+              </form>
+            </div>
+          </div>
+        {%endif%}
+      {%endfor%}
+    {%endif%}
+  {%endfor%}
+
+<p> Inscrivez vous à nos super repas! </p>
+<br/>
+
+  <h4>Mes repas à venir</h4>
+
+  {%for repas in repas%}
+    {%if repas.utilisateur == user.username %}
+      <br/>
+      <div class="card bg-light">
+        <div class="card-header">
+          {{repas.menu}}
+        </div>
+        <div class="card-body bg-light">
+          <h5 class="card-title" style="color: #228B22;">{{repas.date}}</h5>
+          <p class="card-text">{{repas.description}}</p>
+          <p class="card-text"> Il y a {{repas.nombre_d_inscrit}} participant(s).
+            {%if repas.nombre_d_inscrit != 0 %}
+              Les participants :
+              {%for inscrit in inscrit%}
+                {%if inscrit.idrepas == repas.pk %}
+                  {{inscrit.nom}}
+                {%endif%}
+              {%endfor%}
+            {%endif%}
+          </p>
+          <a href="{% url 'repas_details' pk=repas.pk %}"> Détails du repas</a>
+          {%if user.username == repas.utilisateur%}
+          <form method="post" action="{% url 'supprimer_repas' repas.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Supprimer ce repas</button>
+          </form>
+          {%endif%}
+        </div>
+      </div>
+    {%endif%}
+  {%endfor%}
+
+  <br/>
+  <p> Vous voulez proposer un repas ?</p>
+  <div>
+    <a href="{% url 'creer_repas' %}" class="btn btn-primary" role="button" aria-pressed="true" style="background-color: #228B22;">Ajouter un repas  </a>
+  </div>
+
+{%else%}
+<div class="" style="height: 100%">
+  <p> Vous ne pouvez pas voir le contenu de cette page car vous n'êtes pas connecté</p>
+  <a href="{% url 'deconnexion' %}" class="btn btn-success" role="button" aria-pressed="true" >Se connecter </a>
+</div>
+{%endif%}
+<br/>
+{% endblock %}

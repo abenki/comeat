@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static%}
+<h1>Se connecter</h1>
+
+{% if error %}
+  <p><strong>Utilisateur inexistant ou mauvais de mot de passe.</strong></p>
+{% endif %}
+
+{% block contenu %}
+{% if messages %}
+<div class="alert alert-danger" role="alert">
+<ul class="messages">
+    {% for message in messages %}
+    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+</div>
+{% endif %}
+
+<form method="post" action=".">
+    {% csrf_token %}
+    <div class="col">
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-success">Se connecter</button>
+    </div>
+</form>
+<br>
+<br>
+{% endblock %}
