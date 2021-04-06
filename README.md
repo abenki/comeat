@@ -1,4 +1,4 @@
-# Comeat
+# Comeat 🍝
 
 Web application to allow students on campus to share their meals with others. The host posts a meal announcement that other users can subscribe to.
 
